@@ -27,6 +27,10 @@ namespace Causal\FileList\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+
 /**
  * File controller.
  *
@@ -45,7 +49,28 @@ class FileController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	 * @return void
 	 */
 	public function listAction() {
-		return 'listing goes here...';
+		$pathToList = $this->settings['path'];
+		$folder = $this->getFolderToDisplay($pathToList);
+		$files = $folder->getFiles();
+
+		$this->view->assign('files', $files);
+	}
+
+	/**
+	 * @param $pathToList
+	 * @return \TYPO3\CMS\Core\Resource\FileInterface|\TYPO3\CMS\Core\Resource\Folder
+	 */
+	protected function getFolderToDisplay($pathToList) {
+		if (substr($pathToList, 0, 5) == 'file:') {
+			$pathToList = substr($pathToList, 5);
+		}
+		/** @var ResourceFactory $storageFactory */
+		$storageFactory = GeneralUtility::makeInstance('TYPO3\CMS\Core\Resource\ResourceFactory');
+		$storage = $storageFactory->getStorageObjectFromCombinedIdentifier($pathToList);
+
+		$folder = $storageFactory->retrieveFileOrFolderObject($pathToList);
+
+		return $folder;
 	}
 
 }
