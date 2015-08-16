@@ -27,6 +27,7 @@ namespace Causal\FileList\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -46,14 +47,22 @@ class FileController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	/**
 	 * Listing of files.
 	 *
+	 * @param \TYPO3\CMS\Extbase\Domain\Model\Folder $folder The folder to display.
 	 * @return void
 	 */
-	public function listAction() {
-		$pathToList = $this->settings['path'];
-		$folder = $this->getFolderToDisplay($pathToList);
-		$files = $folder->getFiles();
+	public function listAction($folder = NULL) {
+		$withinFolder = $folder !== NULL;
+		if ($folder === NULL) {
+			$pathToList = $this->settings['path'];
+			$folder = $this->getFolderToDisplay($pathToList);
+		} else {
+			// We have an Extbase folder abstraction, but we need the original folder, as Extbase does not expose all
+			// the methods
+			$folder = $folder->getOriginalResource();
+		}
 
-		$this->view->assign('files', $files);
+		$this->view->assign('folder', $folder);
+		$this->view->assign('inFolder', $withinFolder);
 	}
 
 	/**

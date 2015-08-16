@@ -1,5 +1,11 @@
 <ul>
-<f:for each="{files}" as="file">
-	<li><a href="{file.publicUrl}">{file.name}</a></li>
+<f:if condition="{inFolder}">
+	<li class="up folder"><f:link.action action="list" arguments="{folder: folder.parentFolder.combinedIdentifier}">..</f:link.action></li>
+</f:if>
+<f:for each="{folder.subfolders}" as="subfolder">
+	<li class="folder"><f:link.action action="list" arguments="{folder: subfolder.combinedIdentifier}">{subfolder.name}/</f:link.action></li>
+</f:for>
+<f:for each="{folder.files}" as="file">
+	<li class="file"><a href="{file.publicUrl}">{file.name}</a></li>
 </f:for>
 </ul>
