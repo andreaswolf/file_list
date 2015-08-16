@@ -51,18 +51,28 @@ class FileController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController 
 	 * @return void
 	 */
 	public function listAction($folder = NULL) {
-		$withinFolder = $folder !== NULL;
-		if ($folder === NULL) {
-			$pathToList = $this->settings['path'];
-			$folder = $this->getFolderToDisplay($pathToList);
-		} else {
+		$inSubfolder = $folder !== NULL;
+		$pathToList = $this->settings['path'];
+		$rootFolder = $this->getFolderToDisplay($pathToList);
+
+		if ($folder !== NULL) {
 			// We have an Extbase folder abstraction, but we need the original folder, as Extbase does not expose all
 			// the methods
 			$folder = $folder->getOriginalResource();
+
+			if (!$folder->getStorage()->isWithinFolder($rootFolder, $folder)) {
+				// illegal access!
+				throw new \RuntimeException("Requested folder is not within root folder", 1439756698);
+			}
+			if ($folder->getCombinedIdentifier() === $rootFolder->getCombinedIdentifier()) {
+				$inSubfolder = FALSE;
+			}
+		} else {
+			$folder = $rootFolder;
 		}
 
 		$this->view->assign('folder', $folder);
-		$this->view->assign('inFolder', $withinFolder);
+		$this->view->assign('inFolder', $inSubfolder);
 	}
 
 	/**
