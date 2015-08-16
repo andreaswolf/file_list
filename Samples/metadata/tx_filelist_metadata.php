@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2010-2011 Xavier Perseguers  <typo3@perseguers.ch>
+*  (c) 2010-2015 Xavier Perseguers <xavier@causal.ch>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -29,16 +29,16 @@ class tx_filelist_metadata {
 		$markers['###AUTHOR###'] = '';
 		$markers['###DIMENSIONS###'] = '';
 
-		if (!($data['type'] == 'FILE' && strtolower(substr($data['path'], -4)) == '.jpg')) {
+		if (!($data['type'] === 'FILE' && strtolower(substr($data['path'], -4)) === '.jpg')) {
 			return $markers;
 		}
 
 		$fields = $pObj->settings['fields.'];
 
-			// Update configuration with current filename
+		// Update configuration with current filename
 		$fields = $this->replaceFilename($fields, $data['fullpath']);
 
-			// Populate additional markers
+		// Populate additional markers
 		$markers['###APERTURE###'] = $pObj->cObj->cObjGetSingle($fields['aperture'], $fields['aperture.']);
 		$markers['###AUTHOR###'] = $pObj->cObj->cObjGetSingle($fields['author'], $fields['author.']);
 		$markers['###DIMENSIONS###'] = $pObj->cObj->cObjGetSingle($fields['dimensions'], $fields['dimensions.']);
@@ -68,11 +68,3 @@ class tx_filelist_metadata {
 	}
 
 }
-
-
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/file_list/Samples/metadata/tx_filelist_metadata.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/file_list/Samples/metadata/tx_filelist_metadata.php']);
-}
-
-?>
